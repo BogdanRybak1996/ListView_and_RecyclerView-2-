@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#607D8B">
+
+        <ImageView
+            android:id="@+id/git_hub_user_info_photo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="8dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop" />
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/git_hub_user_info_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="8dp"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                tools:text="Bohdan Rybak" />
+
+            <TextView
+                android:id="@+id/git_hub_user_info_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:linksClickable="true"
+
+                android:paddingTop="4dp"
+                android:textSize="18sp"
+                tools:text="bogdanrybak1996@gmail.com" />
+
+            <TextView
+                android:id="@+id/git_hub_user_info_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:linksClickable="true"
+                android:paddingTop="4dp"
+                android:textSize="18sp"
+                tools:text="bogdanrybak1996" />
+
+            <TextView
+                android:id="@+id/git_hub_user_info_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:linksClickable="true"
+                android:paddingTop="4dp"
+                android:textSize="18sp"
+                tools:text="User" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="4dp"
+                android:paddingTop="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Public repositories:"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/git_hub_user_info_repos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="2dp"
+                    android:textSize="18sp"
+                    tools:text="10" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="4dp"
+                android:paddingTop="4dp">
+
+                <TextView
+                    android:id="@+id/git_hub_user_info_location_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Location:"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/git_hub_user_info_location"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:linksClickable="true"
+                    android:paddingLeft="2dp"
+                    android:textSize="18sp"
+                    tools:text="Cherkasy" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="4dp"
+                android:paddingTop="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Followers:"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/git_hub_user_info_followers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="2dp"
+                    android:textSize="18sp"
+                    tools:text="20" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="4dp"
+                android:paddingTop="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Following:"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/git_hub_user_info_followoing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="2dp"
+                    android:textSize="18sp"
+                    tools:text="20" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/git_hub_user_info_biography_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Biography:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/git_hub_user_info_biography"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="2dp"
+                android:textSize="18sp"
+                tools:text="biography" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
