@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.example.bogda.geekhubandroidgrouplist.Receivers.ChargeReceiver;
 import com.example.bogda.geekhubandroidgrouplist.Receivers.HeadPhoneReceiver;
+import com.example.bogda.geekhubandroidgrouplist.contacts.ContactsActivity;
 import com.example.bogda.geekhubandroidgrouplist.listView.ListViewActivity;
 import com.example.bogda.geekhubandroidgrouplist.R;
 import com.example.bogda.geekhubandroidgrouplist.photo.PhotoActivity;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         Button listViewButton = (Button) findViewById(R.id.list_view_button);
         Button recycleViewButton = (Button) findViewById(R.id.recycle_view_button);
         Button makePhotoButton = (Button) findViewById(R.id.photo_button);
+        Button contactsButton = (Button) findViewById(R.id.contacts_button);
         listViewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -49,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), PhotoActivity.class);
+                startActivity(intent);
+            }
+        });
+        contactsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ContactsActivity.class);
                 startActivity(intent);
             }
         });
