@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import io.realm.Realm;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.HttpUrl;
@@ -37,6 +38,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static com.example.bogda.geekhubandroidgrouplist.service.OnlineChecker.isOnline;
+import static com.example.bogda.geekhubandroidgrouplist.service.RealmPeoples.getAllPeoples;
+import static com.example.bogda.geekhubandroidgrouplist.service.RealmPeoples.savePeoples;
 
 /**
  * Created by bogda on 29.10.2016.
@@ -44,33 +47,45 @@ import static com.example.bogda.geekhubandroidgrouplist.service.OnlineChecker.is
 
 public class RecyclerViewFragment extends Fragment implements OnItemClickListener {
     ArrayList<People> peoples = null;
-
+    Realm realm;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        realm = Realm.getDefaultInstance();
         final View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
         peoples = new ArrayList<People>();
 
-        peoples.add(new People("Евгений Жданов", "113264746064942658029", "zhdanov-ek"));
-        peoples.add(new People("Edgar Khimich", "102197104589432395674", "lyfm"));
-        peoples.add(new People("Alexander Storchak", "106553086375805780685", "new15"));
-        peoples.add(new People("Yevhenii Sytnyk", "101427598085441575303", "YevheniiSytnyk"));
-        peoples.add(new People("Alyona Prelestnaya", "107382407687723634701", "HelenCool"));
-        peoples.add(new People("Богдан Рибак", "103145064185261665176", "BogdanRybak1996"));
-        peoples.add(new People("Ірина Смалько", "113994208318508685327", "IraSmalko"));
-        peoples.add(new People("Владислав Винник", "117765348335292685488", "vlads0n"));
-        peoples.add(new People("Ігор Пахаренко", "108231952557339738781", "IhorPakharenko"));
-        peoples.add(new People("Андрей Рябко", "110288437168771810002", "RyabkoAndrew"));
-        peoples.add(new People("Ivan Leshchenko", "111088051831122657934", "ivleshch"));
-        peoples.add(new People("Микола Піхманець", "110087894894730430086", "NikPikhmanets"));
-        peoples.add(new People("Ruslan Migal", "106331812587299981536", "rmigal"));
-        peoples.add(new People("Руслан Воловик", "109719711261293841416", "RuslanVolovyk"));
-        peoples.add(new People("Valerii Gubskyi", "107910188078571144657", "gvv-ua"));
-        peoples.add(new People("Иван Сергеенко", "111389859649705526831", "dogfight81"));
-        peoples.add(new People("Вова Лымарь", "109227554979939957830", "VovanNec"));
-        peoples.add(new People("Даша Кириченко", "103130382244571139113", "dashakdsr"));
-        peoples.add(new People("Michael Tyoply", "110313151428733681846", "RedGeekPanda"));
-        peoples.add(new People("Павел Сакуров", "108482088578879737406", "sakurov"));
+        ArrayList<People> tempPeoples = getAllPeoples();
+        if (tempPeoples == null) {
+            peoples.add(new People("Евгений Жданов", "113264746064942658029", "zhdanov-ek"));
+            peoples.add(new People("Edgar Khimich", "102197104589432395674", "lyfm"));
+            peoples.add(new People("Alexander Storchak", "106553086375805780685", "new15"));
+            peoples.add(new People("Yevhenii Sytnyk", "101427598085441575303", "YevheniiSytnyk"));
+            peoples.add(new People("Alyona Prelestnaya", "107382407687723634701", "HelenCool"));
+            peoples.add(new People("Богдан Рибак", "103145064185261665176", "BogdanRybak1996"));
+            peoples.add(new People("Ірина Смалько", "113994208318508685327", "IraSmalko"));
+            peoples.add(new People("Владислав Винник", "117765348335292685488", "vlads0n"));
+            peoples.add(new People("Ігор Пахаренко", "108231952557339738781", "IhorPakharenko"));
+            peoples.add(new People("Андрей Рябко", "110288437168771810002", "RyabkoAndrew"));
+            peoples.add(new People("Ivan Leshchenko", "111088051831122657934", "ivleshch"));
+            peoples.add(new People("Микола Піхманець", "110087894894730430086", "NikPikhmanets"));
+            peoples.add(new People("Ruslan Migal", "106331812587299981536", "rmigal"));
+            peoples.add(new People("Руслан Воловик", "109719711261293841416", "RuslanVolovyk"));
+            peoples.add(new People("Valerii Gubskyi", "107910188078571144657", "gvv-ua"));
+            peoples.add(new People("Иван Сергеенко", "111389859649705526831", "dogfight81"));
+            peoples.add(new People("Вова Лымарь", "109227554979939957830", "VovanNec"));
+            peoples.add(new People("Даша Кириченко", "103130382244571139113", "dashakdsr"));
+            peoples.add(new People("Michael Tyoply", "110313151428733681846", "RedGeekPanda"));
+            peoples.add(new People("Павел Сакуров", "108482088578879737406", "sakurov"));
+            savePeoples(peoples);
+        }
+        else{
+            for(People p : tempPeoples){
+                peoples.add(p);
+            }
+        }
+
+
 
         Collections.sort(peoples);
 
@@ -131,5 +146,11 @@ public class RecyclerViewFragment extends Fragment implements OnItemClickListene
             return;
         }
 
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 }

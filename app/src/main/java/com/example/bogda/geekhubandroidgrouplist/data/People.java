@@ -1,13 +1,19 @@
 package com.example.bogda.geekhubandroidgrouplist.data;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by bogda on 25.10.2016.
  */
 
-public class People implements Comparable {
+public class People extends RealmObject implements Comparable {
     private String name;
+    @PrimaryKey
     private String googlePlusId;
     private String gitHubUserName;
+
+    public People(){}
 
     public People(String name, String googlePlusId, String gitHubUserName) {
         this.name = name;
@@ -27,17 +33,11 @@ public class People implements Comparable {
         return googlePlusId;
     }
 
-    public void setGooglePlusId(String googlePlusId) {
-        this.googlePlusId = googlePlusId;
-    }
 
     public String getGitHubUserName() {
         return gitHubUserName;
     }
 
-    public void setGitHubUserName(String gitHubUserName) {
-        this.gitHubUserName = gitHubUserName;
-    }
 
     @Override
     public int compareTo(Object o) {

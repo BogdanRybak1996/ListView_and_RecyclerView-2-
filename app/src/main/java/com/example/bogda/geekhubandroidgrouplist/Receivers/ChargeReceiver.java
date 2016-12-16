@@ -1,4 +1,4 @@
-package com.example.bogda.geekhubandroidgrouplist.Receivers;
+package com.example.bogda.geekhubandroidgrouplist.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

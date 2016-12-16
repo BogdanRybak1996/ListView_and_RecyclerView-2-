@@ -1,18 +1,14 @@
 package com.example.bogda.geekhubandroidgrouplist.main;
 
-import android.app.Application;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
-import com.example.bogda.geekhubandroidgrouplist.Receivers.ChargeReceiver;
-import com.example.bogda.geekhubandroidgrouplist.Receivers.HeadPhoneReceiver;
+import com.example.bogda.geekhubandroidgrouplist.receivers.ChargeReceiver;
+import com.example.bogda.geekhubandroidgrouplist.receivers.HeadPhoneReceiver;
 import com.example.bogda.geekhubandroidgrouplist.contacts.ContactsActivity;
 import com.example.bogda.geekhubandroidgrouplist.listView.ListViewActivity;
 import com.example.bogda.geekhubandroidgrouplist.R;

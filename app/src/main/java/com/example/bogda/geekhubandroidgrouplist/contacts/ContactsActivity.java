@@ -6,9 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.bogda.geekhubandroidgrouplist.R;
-import com.example.bogda.geekhubandroidgrouplist.Receivers.ChargeReceiver;
-import com.example.bogda.geekhubandroidgrouplist.Receivers.HeadPhoneReceiver;
-import com.example.bogda.geekhubandroidgrouplist.listView.ListViewFragment;
+import com.example.bogda.geekhubandroidgrouplist.receivers.ChargeReceiver;
+import com.example.bogda.geekhubandroidgrouplist.receivers.HeadPhoneReceiver;
 
 public class ContactsActivity extends AppCompatActivity {
 
