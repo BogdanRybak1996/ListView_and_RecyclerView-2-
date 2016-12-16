@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 
 import com.example.bogda.geekhubandroidgrouplist.R;
 import com.example.bogda.geekhubandroidgrouplist.receivers.ChargeReceiver;
@@ -25,6 +26,7 @@ public class ListViewActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.container_list_view, new ListViewFragment()).commit();
         }
         getSupportActionBar().setTitle("Group list");
+
     }
 
     @Override
@@ -48,5 +50,4 @@ public class ListViewActivity extends AppCompatActivity {
             return;
         }
     }
-
 }

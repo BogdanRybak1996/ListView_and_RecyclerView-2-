@@ -7,9 +7,13 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import com.example.bogda.geekhubandroidgrouplist.R;
 import com.example.bogda.geekhubandroidgrouplist.data.People;
@@ -24,15 +28,19 @@ import io.realm.RealmResults;
 
 import static com.example.bogda.geekhubandroidgrouplist.service.RealmPeoples.*;
 
-public class ListViewFragment extends Fragment {
-    Realm realm;
 
+//TODO: Refactor
+public class ListViewFragment extends Fragment implements SearchView.OnQueryTextListener {
+    Realm realm;
+    SearchView searchView;
+    ListView listView;
+    ArrayList<People> peoples;
+    SwipeActionAdapter swipeAdapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         realm = Realm.getDefaultInstance();
         final View rootView = inflater.inflate(R.layout.fragment_list_view, container, false);
-
-        final ArrayList<People> peoples = new ArrayList<People>();
+        peoples = new ArrayList<People>();
 
 
         ArrayList<People> tempPeoples = getAllPeoples();
@@ -67,12 +75,11 @@ public class ListViewFragment extends Fragment {
 
         Collections.sort(peoples);
 
-        final ListView listView = (ListView) rootView.findViewById(R.id.data_list_view);
+        listView = (ListView) rootView.findViewById(R.id.data_list_view);
         final PeopleAdapter adapter = new PeopleAdapter(getActivity(), peoples);
-        listView.setAdapter(adapter);
         listView.setClickable(true);
 
-        final SwipeActionAdapter swipeAdapter = new SwipeActionAdapter(adapter);
+        swipeAdapter = new SwipeActionAdapter(adapter);
         swipeAdapter.setListView(listView);
         listView.setAdapter(swipeAdapter);
         swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
@@ -111,10 +118,57 @@ public class ListViewFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return true;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.searchmenu, menu);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(this);
+        searchView.setQueryHint("Search");
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        ArrayList<People> searchPeoples = new ArrayList<People>();
+        for(People p : peoples){
+            if(p.getName().contains(query)){
+                searchPeoples.add(p);
+            }
+            PeopleAdapter adapter = new PeopleAdapter(getActivity(), searchPeoples);
+            listView.setAdapter(adapter);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        ArrayList<People> searchPeoples = new ArrayList<People>();
+        for(People p : peoples){
+            if(p.getName().contains(newText)){
+                searchPeoples.add(p);
+            }
+            PeopleAdapter adapter = new PeopleAdapter(getActivity(), searchPeoples);
+            listView.setAdapter(adapter);
+
+            //TODO: Use swipe adapter
+        }
+        return false;
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
     }
 }
