@@ -102,4 +102,5 @@ public class PeopleAdapter extends RecyclerView.Adapter<PeopleAdapter.MyHolder> 
             if (clickListener != null) clickListener.onClick(view, getAdapterPosition());
         }
     }
+
 }

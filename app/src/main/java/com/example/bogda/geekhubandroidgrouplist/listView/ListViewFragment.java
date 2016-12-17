@@ -35,7 +35,7 @@ public class ListViewFragment extends Fragment implements SearchView.OnQueryText
     SearchView searchView;
     ListView listView;
     ArrayList<People> peoples;
-    SwipeActionAdapter swipeAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         realm = Realm.getDefaultInstance();
@@ -78,42 +78,7 @@ public class ListViewFragment extends Fragment implements SearchView.OnQueryText
         listView = (ListView) rootView.findViewById(R.id.data_list_view);
         final PeopleAdapter adapter = new PeopleAdapter(getActivity(), peoples);
         listView.setClickable(true);
-
-        swipeAdapter = new SwipeActionAdapter(adapter);
-        swipeAdapter.setListView(listView);
-        listView.setAdapter(swipeAdapter);
-        swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
-            @Override
-            public boolean hasActions(int position, SwipeDirection direction) {
-                if (direction.isLeft()) return true;
-                if (direction.isRight()) return true;
-                return false;
-            }
-
-            @Override
-            public boolean shouldDismiss(int position, SwipeDirection direction) {
-                return true;
-            }
-
-            @Override
-            public void onSwipe(int[] position, SwipeDirection[] direction) {
-                final int curPos = position[0];
-                final People people = peoples.get(curPos);
-                peoples.remove(curPos);
-                swipeAdapter.notifyDataSetChanged();
-
-                Snackbar.make(rootView, people.getName() + " deleted", Snackbar.LENGTH_LONG)
-                        .setAction("Undo", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                peoples.add(curPos, people);
-                                swipeAdapter.notifyDataSetChanged();
-                            }
-                        })
-                        .setActionTextColor(Color.RED)
-                        .show();
-            }
-        });
+        setSwipeAdapter(adapter);
 
         return rootView;
     }
@@ -135,28 +100,23 @@ public class ListViewFragment extends Fragment implements SearchView.OnQueryText
     @Override
     public boolean onQueryTextSubmit(String query) {
         ArrayList<People> searchPeoples = new ArrayList<People>();
+        PeopleAdapter adapter = new PeopleAdapter(getActivity(), searchPeoples);
         for(People p : peoples){
-            if(p.getName().contains(query)){
+            if(p.getName().toLowerCase().contains(query.toLowerCase())){
                 searchPeoples.add(p);
             }
-            PeopleAdapter adapter = new PeopleAdapter(getActivity(), searchPeoples);
             listView.setAdapter(adapter);
+        }
+        if(query.equals("")){
+            adapter = new PeopleAdapter(getActivity(), peoples);
+            setSwipeAdapter(adapter);
         }
         return false;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        ArrayList<People> searchPeoples = new ArrayList<People>();
-        for(People p : peoples){
-            if(p.getName().contains(newText)){
-                searchPeoples.add(p);
-            }
-            PeopleAdapter adapter = new PeopleAdapter(getActivity(), searchPeoples);
-            listView.setAdapter(adapter);
-
-            //TODO: Use swipe adapter
-        }
+        onQueryTextSubmit(newText);
         return false;
     }
 
@@ -170,5 +130,42 @@ public class ListViewFragment extends Fragment implements SearchView.OnQueryText
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+    }
+
+    private void setSwipeAdapter(final PeopleAdapter adapter){
+        final SwipeActionAdapter swipeAdapter = new SwipeActionAdapter(adapter);
+        swipeAdapter.setListView(listView);
+        listView.setAdapter(swipeAdapter);
+        swipeAdapter.setSwipeActionListener(new SwipeActionAdapter.SwipeActionListener() {
+            @Override
+            public boolean hasActions(int position, SwipeDirection direction) {
+                if (direction.isLeft()) return true;
+                if (direction.isRight()) return true;
+                return false;
+            }
+
+            @Override
+            public boolean shouldDismiss(int position, SwipeDirection direction) {
+                return true;
+            }
+
+            @Override
+            public void onSwipe(int[] position, SwipeDirection[] direction) {
+                final int curPos = position[0];
+                final People people = peoples.get(curPos);
+                peoples.remove(curPos);
+                swipeAdapter.notifyDataSetChanged();
+                Snackbar.make(getView(), people.getName() + " deleted", Snackbar.LENGTH_LONG)
+                        .setAction("Undo", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                peoples.add(curPos, people);
+                                swipeAdapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setActionTextColor(Color.RED)
+                        .show();
+            }
+        });
     }
 }

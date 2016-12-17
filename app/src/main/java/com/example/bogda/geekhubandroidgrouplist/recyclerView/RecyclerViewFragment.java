@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -15,9 +16,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.bogda.geekhubandroidgrouplist.data.People;
@@ -45,15 +49,21 @@ import static com.example.bogda.geekhubandroidgrouplist.service.RealmPeoples.sav
  * Created by bogda on 29.10.2016.
  */
 
-public class RecyclerViewFragment extends Fragment implements OnItemClickListener {
+public class RecyclerViewFragment extends Fragment implements OnItemClickListener, SearchView.OnQueryTextListener {
     ArrayList<People> peoples = null;
+    ArrayList<People> currPeoples = null;
     Realm realm;
+    SearchView searchView;
+    RecyclerView recyclerView;
+    ItemTouchHelper swipeHelper;
+    PeopleAdapter adapter;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         realm = Realm.getDefaultInstance();
         final View rootView = inflater.inflate(R.layout.fragment_recycler_view, container, false);
 
         peoples = new ArrayList<People>();
+        currPeoples = new ArrayList<People>();
 
         ArrayList<People> tempPeoples = getAllPeoples();
         if (tempPeoples == null) {
@@ -85,12 +95,13 @@ public class RecyclerViewFragment extends Fragment implements OnItemClickListene
             }
         }
 
+        currPeoples = peoples;
 
 
-        Collections.sort(peoples);
+        Collections.sort(currPeoples);
 
-        final PeopleAdapter adapter = new PeopleAdapter(getActivity(), peoples);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_data_list);
+        adapter = new PeopleAdapter(getActivity(), currPeoples);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycle_data_list);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -98,43 +109,16 @@ public class RecyclerViewFragment extends Fragment implements OnItemClickListene
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setClickable(true);
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
 
-            @Override
-            public void onSwiped(final RecyclerView.ViewHolder viewHolder, final int swipeDir) {
-                final int pos = viewHolder.getAdapterPosition();
-                final People people = peoples.get(pos);
-                adapter.notifyItemRemoved(pos);
-                adapter.notifyDataSetChanged();
-                peoples.remove(pos);
-                Snackbar.make(rootView, people.getName() + " deleted", Snackbar.LENGTH_LONG)
-                        .setAction("Undo", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                peoples.add(pos, people);
-                                adapter.notifyItemRangeInserted(pos, 1);
-                                adapter.notifyDataSetChanged();
-                            }
-                        })
-                        .setActionTextColor(Color.RED)
-                        .show();
-            }
-
-        };
-
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        swipeHelper = new ItemTouchHelper(getTouchHelper(adapter,currPeoples));
+        swipeHelper.attachToRecyclerView(recyclerView);
 
         return rootView;
     }
 
     @Override
     public void onClick(View view, int position) {
-        final People people = peoples.get(position);
+        final People people = currPeoples.get(position);
         if(isOnline(getActivity())) {
             Intent intent = new Intent(getContext(), GooglePlusUserInfoActivity.class);
             intent.setData(Uri.parse("https://plus.google.com/" + people.getGooglePlusId()));
@@ -152,5 +136,83 @@ public class RecyclerViewFragment extends Fragment implements OnItemClickListene
     public void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.searchmenu, menu);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(this);
+        searchView.setQueryHint("Search");
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        currPeoples = new ArrayList<People>();
+        for(People p : peoples){
+            if(p.getName().toLowerCase().contains(query.toLowerCase())) {
+                currPeoples.add(p);
+            }
+        }
+        if(query.equals("")){
+            currPeoples = peoples;
+        }
+        adapter = new PeopleAdapter(getActivity(),currPeoples);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
+
+        swipeHelper.attachToRecyclerView(null);
+        swipeHelper = new ItemTouchHelper(getTouchHelper(adapter,currPeoples));
+        swipeHelper.attachToRecyclerView(recyclerView);
+
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        onQueryTextSubmit(newText);
+        return false;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    private ItemTouchHelper.SimpleCallback getTouchHelper(final PeopleAdapter adapter, final ArrayList<People> peoplesItems){
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, final int swipeDir) {
+                final int pos = viewHolder.getAdapterPosition();
+                final People people = peoplesItems.get(pos);
+                adapter.notifyItemRemoved(pos);
+                adapter.notifyDataSetChanged();
+                peoplesItems.remove(pos);
+                peoples.remove(people);
+                Snackbar.make(getView(), people.getName() + " deleted", Snackbar.LENGTH_LONG)
+                        .setAction("Undo", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                peoplesItems.add(pos, people);
+                                peoples.add(people);
+                                Collections.sort(peoples);
+                                adapter.notifyItemRangeInserted(pos, 1);
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setActionTextColor(Color.RED)
+                        .show();
+            }
+
+        };
+
+        return  simpleItemTouchCallback;
     }
 }
